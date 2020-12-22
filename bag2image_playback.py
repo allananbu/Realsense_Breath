@@ -8,7 +8,7 @@ images=[]
 i = 0
 try:
     config = rs.config()
-    rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/test3.bag", repeat_playback=False)
+    rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/test1.bag", repeat_playback=False)
     pipeline = rs.pipeline()
     profile=pipeline.start(config)
     playback = profile.get_device().as_playback()
@@ -16,7 +16,7 @@ try:
 
     while True:
         frames = pipeline.wait_for_frames()
-        playback.pause()
+       
         color_frame=frames.get_color_frame()
         depth_frame = frames.get_depth_frame()
         if not depth_frame:
@@ -30,17 +30,16 @@ try:
         #cv2.imwrite("C:/Users/Allan/Desktop/JRF/Realsense/Python" + str(i) + ".png", depth_image)
                 # Show images
         img=np.hstack((color_image,depth_color))
-        plt.imshow(color_image)
-        plt.pause(0.05)
-#        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-#        cv2.imshow('RealSense', img)
-#        key=cv2.waitKey(1)
-#        if key & 0xFF == ord('q') or key == 27:
-#            plt.clo
-#            break
+#        plt.imshow(color_image)
+#        plt.pause(0.05)
+        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
+        cv2.imshow('RealSense', img)
+        key=cv2.waitKey(1)
+        if key & 0xFF == ord('q') or key == 27:
+            plt.clo
+            break
 
         i += 1
-        playback.resume()
 except RuntimeError:
     print("There are no more frames left in the .bag file!")
         
