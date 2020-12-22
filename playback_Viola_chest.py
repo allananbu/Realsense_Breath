@@ -27,7 +27,7 @@ try:
     while True:
         frame_present, frames = pipeline.try_wait_for_frames()
         frame_no=frames.get_frame_number()
-        time_stamp=frames.get_timestamp()
+#        time_stamp=frames.get_timestamp()
         #playback.pause()
         color_frame=frames.get_color_frame()
         depth_frame = frames.get_depth_frame()

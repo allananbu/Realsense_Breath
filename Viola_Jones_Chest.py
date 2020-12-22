@@ -108,29 +108,29 @@ try:
        #Convert uint to meters
         color_all.append(depth_image)
         #Remove background from image
-#        grey_color=153
-#        depth_image_3d = np.dstack((depth_image,depth_image,depth_image)) #depth image is 1 channel, color is 3 channels
-#        bg_removed = np.where((depth_image_3d > clipping_distance) | (depth_image_3d <= 0), grey_color, color_image)
-#        depth_all.append(depth_image)
-#        color_all.append(color_image)
+        grey_color=153
+        depth_image_3d = np.dstack((depth_image,depth_image,depth_image)) #depth image is 1 channel, color is 3 channels
+        bg_removed = np.where((depth_image_3d > clipping_distance) | (depth_image_3d <= 0), grey_color, color_image)
+        depth_all.append(depth_image)
+        color_all.append(color_image)
         #Face detection using Viola Jones algorithm
         #convert backgnd removed img to grayscale
-#        gray_bg=cv2.cvtColor(color_image,cv2.COLOR_BGR2GRAY)
-#        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
-#        faces=face_cascade.detectMultiScale(gray_bg,1.1,5)
-#        for (x,y,w,h) in faces:
-#            img=cv2.rectangle(color_image,(x-50,y+250),(x+w,y+h+220),(255,0,0),2)
-#            img1=cv2.rectangle(depth_colormap,(x-50,y+250),(x+w,y+h+220),(0,255,0),2)
-#            roi_bg=color_image[y:y+h,x:x+w]
-#        #roi_bg_gray=cv2.cvtColor(roi_bg,cv2.COLOR_BGR2GRAY)
-#        roi_depth=depth_image[y+250:y+h+220,x-50:x+w]
-#        roi_all.append(roi_depth)
-#        roi_meter=roi_depth*0.001
-#        m=np.median(roi_depth[roi_depth>0])
-#        roi_depth[roi_depth==0]=m
-#        
-#        mean_depth=np.mean(roi_depth)
-#        mean_all.append(mean_depth)
+        gray_bg=cv2.cvtColor(color_image,cv2.COLOR_BGR2GRAY)
+        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+        faces=face_cascade.detectMultiScale(gray_bg,1.1,5)
+        for (x,y,w,h) in faces:
+            img=cv2.rectangle(color_image,(x-50,y+250),(x+w,y+h+220),(255,0,0),2)
+            img1=cv2.rectangle(depth_colormap,(x-50,y+250),(x+w,y+h+220),(0,255,0),2)
+            roi_bg=color_image[y:y+h,x:x+w]
+        #roi_bg_gray=cv2.cvtColor(roi_bg,cv2.COLOR_BGR2GRAY)
+        roi_depth=depth_image[y+250:y+h+220,x-50:x+w]
+        roi_all.append(roi_depth)
+        roi_meter=roi_depth*0.001
+        m=np.median(roi_depth[roi_depth>0])
+        roi_depth[roi_depth==0]=m
+        
+        mean_depth=np.mean(roi_depth)
+        mean_all.append(mean_depth)
         depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
 #        #images = np.hstack(( depth_colormap,bg_removed))
         cv2.namedWindow('Align Example', cv2.WINDOW_AUTOSIZE)
