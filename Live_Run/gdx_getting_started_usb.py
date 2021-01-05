@@ -33,10 +33,10 @@ gdx = gdx.gdx()
 
 # This code uses the gdx functions to collect data from your Go Direct sensors. 
 gdx.open_usb()
-gdx.select_sensors()
+gdx.select_sensors([1])
 gdx.start(period=100) 
 force=[]
-for i in range(0,600):
+for i in range(0,1200):
     measurements = gdx.read()
     force.append(measurements)
     if measurements == None: 
@@ -52,3 +52,4 @@ df=pd.DataFrame(dict)
 df.to_csv('C:/Users/Allan/Desktop/JRF/Realsense/Python/Reference/test3.csv')
 
 plt.plot(time,force)
+plt.show()

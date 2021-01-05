@@ -76,6 +76,7 @@ try:
         #print("frame no",frame_no)
         plt.plot(mean_all)
         plt.pause(0.05)
+        plt.show()
         # Show images
         cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
         cv2.imshow('RealSense', images)
@@ -98,8 +99,9 @@ mean_out=[sum(mean_all[i:i+3])/3 for i in range(len(mean_all)-3+1)]
 mean_out=np.array(mean_out)
 mean_out=mean_out[np.logical_not(np.isnan(mean_out))]
 mean_out=(mean_out-mean_out.min())/(mean_out.max()-mean_out.min())
-time=np.linspace(0,int(ts),num=len(mean_out))
-#plt.plot(time,mean_out)
+time=np.linspace(0,int(ts),num=len(mean_all))
+plt.plot(time,mean_all)
+plt.show()
 
 ##Plot belt respiration
 #ref=pd.read_csv('C:/Users/Allan/Desktop/JRF/Realsense/Python/Reference/test1.csv')
