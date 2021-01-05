@@ -9,11 +9,12 @@ import pyrealsense2 as rs
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
-rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/test6.bag", repeat_playback=False)
+rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/test2.bag", repeat_playback=False)
 
 
 images=[]
@@ -90,7 +91,18 @@ finally:
 ts=frame_all[len(frame_all)-1]-frame_all[0]
 ts=ts*0.001
 print("Total time(in sec) is ",ts)
-time=np.linspace(0,int(ts),num=len(frame_all))
+#time=np.linspace(0,int(ts),num=len(frame_all))
 mean_out=[sum(mean_all[i:i+4])/4 for i in range(len(mean_all)-4+1)]
+mean_out=np.array(mean_out)
+mean_out=mean_out[np.logical_not(np.isnan(mean_out))]
+mean_out=(mean_out-mean_out.min())/(mean_out.max()-mean_out.min())
 time=np.linspace(0,int(ts),num=len(mean_out))
-plt.plot(mean_out)
+plt.plot(time,mean_all)
+plt.show()
+
+#Plot belt respiration
+#ref=pd.read_csv('C:/Users/Allan/Desktop/JRF/Realsense/Python/Reference/test1.csv')
+#time2=ref['Time(s)']
+#resp=ref['Force(N)']
+#resp_norm=(resp-resp.min())/(resp.max()-resp.min())
+#plt.plot(time2,resp_norm)

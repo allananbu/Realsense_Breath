@@ -8,11 +8,11 @@ images=[]
 i = 0
 try:
     config = rs.config()
-    rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/test1.bag", repeat_playback=False)
+    rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/bag2.bag", repeat_playback=False)
     pipeline = rs.pipeline()
     profile=pipeline.start(config)
     playback = profile.get_device().as_playback()
-    playback.set_real_time(False)
+    playback.set_real_time(True)
 
     while True:
         frames = pipeline.wait_for_frames()
@@ -36,7 +36,7 @@ try:
         cv2.imshow('RealSense', img)
         key=cv2.waitKey(1)
         if key & 0xFF == ord('q') or key == 27:
-            plt.clo
+            cv2.destroyAllWindows()
             break
 
         i += 1

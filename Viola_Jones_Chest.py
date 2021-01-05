@@ -28,9 +28,9 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 profile = pipeline.start(config)
 #playback = profile.get_device().as_playback()
 #playback.set_real_time(False)
-dev = profile.get_device()
-advnc_mode = rs.rs400_advanced_mode(dev)
-advnc_mode.load_json(json_string)
+#dev = profile.get_device()
+#advnc_mode = rs.rs400_advanced_mode(dev)
+#advnc_mode.load_json(json_string)
 ##Post processing filters
 #decimation = rs.decimation_filter()
 #spatial = rs.spatial_filter()
@@ -41,7 +41,7 @@ advnc_mode.load_json(json_string)
 
 #start pipeline based on configuration
 
-profile.get_stream(rs.stream.depth).as_video_stream_profile().get_intrinsics()
+#profile.get_stream(rs.stream.depth).as_video_stream_profile().get_intrinsics()
 
 #gets properties of depth sensor and find depth scale
 depth_sensor = profile.get_device().first_depth_sensor()
@@ -66,9 +66,9 @@ clipping_distance = clipping_distance_in_meters / depth_scale
 #    depth_scale = depth_sensor.get_depth_scale()
 
 #Align depth and color
-align_to = rs.stream.depth
-align = rs.align(align_to)
-i=1
+#align_to = rs.stream.depth
+#align = rs.align(align_to)
+i=0
 j=1
 
 mean_all=[]
@@ -84,11 +84,11 @@ try:
     while True:
         
         frames = pipeline.wait_for_frames()
-        aligned_frames = align.process(frames)
+        #aligned_frames = frames.process(frames)
         frame_no=frames.get_frame_number()
         #Get depth and color frames
-        depth_frame = aligned_frames.get_depth_frame()
-        color_frame = aligned_frames.get_color_frame()
+        depth_frame = frames.get_depth_frame()
+        color_frame = frames.get_color_frame()
     
         if not color_frame or not depth_frame:
             continue
@@ -108,11 +108,11 @@ try:
        #Convert uint to meters
         color_all.append(depth_image)
         #Remove background from image
-        grey_color=153
-        depth_image_3d = np.dstack((depth_image,depth_image,depth_image)) #depth image is 1 channel, color is 3 channels
-        bg_removed = np.where((depth_image_3d > clipping_distance) | (depth_image_3d <= 0), grey_color, color_image)
-        depth_all.append(depth_image)
-        color_all.append(color_image)
+#        grey_color=153
+#        depth_image_3d = np.dstack((depth_image,depth_image,depth_image)) #depth image is 1 channel, color is 3 channels
+#        bg_removed = np.where((depth_image_3d > clipping_distance) | (depth_image_3d <= 0), grey_color, color_image)
+#        depth_all.append(depth_image)
+#        color_all.append(color_image)
         #Face detection using Viola Jones algorithm
         #convert backgnd removed img to grayscale
         gray_bg=cv2.cvtColor(color_image,cv2.COLOR_BGR2GRAY)
@@ -131,11 +131,10 @@ try:
         
         mean_depth=np.mean(roi_depth)
         mean_all.append(mean_depth)
-        depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
-#        #images = np.hstack(( depth_colormap,bg_removed))
+        #depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
+        images = np.hstack(( depth_colormap,color_image))
         cv2.namedWindow('Align Example', cv2.WINDOW_AUTOSIZE)
-        img=np.hstack((color_image,depth_colormap))
-        cv2.imshow('Align Example', depth_colormap)
+        cv2.imshow('Align Example', images)
         print("frame number",frame_no)
 #        plt.plot(mean_all)
 ##        plt.pause(0.001)
