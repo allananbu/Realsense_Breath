@@ -14,7 +14,7 @@ import pandas as pd
 # Configure depth and color streams
 pipeline = rs.pipeline()
 config = rs.config()
-rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/test2.bag", repeat_playback=False)
+rs.config.enable_device_from_file(config, "C:/Users/Allan/Desktop/JRF/Realsense/Python/test1.bag", repeat_playback=False)
 
 
 images=[]

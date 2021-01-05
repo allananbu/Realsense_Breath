@@ -50,7 +50,7 @@ try:
         depth_image = np.asanyarray(depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
         depth.append(depth_image)
-#        color.append(color_image)
+        color.append(color_image)
         #Convert color to gray for classifier
         gray_bg=cv2.cvtColor(color_image,cv2.COLOR_BGR2GRAY)
         depth_color = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
@@ -69,7 +69,7 @@ try:
         roi_meter=roi_depth*0.001
         m=np.median(roi_meter[roi_meter>0])
         roi_meter[roi_meter==0]=m
-        
+#        
         mean_depth=np.mean(roi_meter)
         mean_all.append(mean_depth)
         print("frame number",frame_no)
@@ -79,8 +79,8 @@ try:
 #         Stack both images horizontally
         images = np.hstack((color_image, depth_color))
         #print("frame no",frame_no)
-        plt.plot(mean_all)
-        plt.pause(0.05)
+#        plt.plot(mean_all)
+#        plt.pause(0.05)
         # Show images
         cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
         cv2.imshow('RealSense', images)
@@ -95,8 +95,9 @@ except RuntimeError:
 finally:
     pipeline.stop()
 new_dep=np.stack(depth,axis=0)
-with open('depth.dat','wb') as file:
-    file.write(struct.pack('i'*len(new_dep),*new_dep))
+new_col=np.stack(color,axis=0)
+np.save('dep1.npy',new_dep)
+np.save('col.npy',new_col)
 
 ts=frame_all[len(frame_all)-1]-frame_all[0]
 ts=ts*0.001
