@@ -28,6 +28,7 @@ from gdx import gdx
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import time
 
 gdx = gdx.gdx()
 
@@ -36,7 +37,9 @@ gdx.open_usb()
 gdx.select_sensors([1])
 gdx.start(period=100) 
 force=[]
-for i in range(0,1200):
+time.sleep(1.11)
+
+for i in range(0,500):
     measurements = gdx.read()
     force.append(measurements)
     if measurements == None: 
@@ -49,7 +52,8 @@ time=np.arange(0,len(force)/10,0.1)
 
 dict={'Time':time,'Force':force}
 df=pd.DataFrame(dict)
-df.to_csv('C:/Users/Allan/Desktop/JRF/Realsense/Python/Reference/test3.csv')
+# df.to_csv('E:/Research/JRF_VideoBasedVitalSign_breathe_Paper2/Realsense/Realsense_Breath/Live_Runtest/test3.csv')
+np.save('belt_data.npy',df)
 
 plt.plot(time,force)
 plt.show()

@@ -13,7 +13,7 @@ pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
-config.enable_record_to_file('bag3.bag')
+config.enable_record_to_file('bag12.bag')
 profile=pipeline.start(config)
 device = profile.get_device()
 depth_sensor = device.query_sensors()[0]
@@ -25,14 +25,19 @@ e1 = cv2.getTickCount()
 
 try:
     while True:
-
+        
         # Wait for a coherent pair of frames: depth and color
         frames = pipeline.wait_for_frames()
+        frame_no=frames.get_frame_number()
+        if frame_no<20:
+            continue
+        # e3=cv2.getTickCount()
+        # print(e3-e1)
         depth_frame = frames.get_depth_frame()
         color_frame = frames.get_color_frame()
         if not depth_frame or not color_frame:
             continue
-
+        
         # Convert images to numpy arrays
         depth_image = np.asanyarray(depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
