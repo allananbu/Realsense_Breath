@@ -7,17 +7,16 @@ Created on Tue Dec 22 10:04:48 2020
 
 import numpy as np
 import pyrealsense2 as rs
-import os
-import time
 import cv2
 import matplotlib.pyplot as plt
-from scipy import signal
+import scipy.io
 
 images=[]
 i = 0
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-# mean_all=[]
-mean_all=np.zeros([1500,1])
+mean_all=[]
+t_all=[]
+#mean_all=np.zeros([1500,1])
 frame_all=np.zeros([1500,1])
 config = rs.config()
 config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
@@ -32,10 +31,20 @@ depth_sensor.set_option(rs.option.laser_power, set_laser)
 temp=np.zeros([2,1])
 peaks=[]
 valley=[]
+con=[]
+j=0
+k=0
+
+a1=scipy.io.loadmat('filt_coef_final.mat')
+a=a1['h']
+a=np.transpose(a)
+a=a[:,0]
 
 #playback = profile.get_device().as_playback()
 #playback.set_real_time(False)
 
+#a=np.load('filt_coeff_1.npy')
+x_n=np.zeros([13,])
 try:
     while True:
         # Wait for a coherent pair of frames: depth and color
@@ -77,29 +86,46 @@ try:
         roi_meter[roi_meter==0]=m
         
         mean_depth=np.mean(roi_meter)
-        # mean_all.append(mean_depth)
-        mean_all[i]=mean_depth
-        i=i+1
-        if i>=1:
-            diff_mean=np.sign(mean_all[i]-mean_all[i-1])
+        mean_all.append(mean_depth)
+#        mean_all[i]=mean_depth
+        
+        try:
+#            x_n=np.delete(x_n,-1)
+            x_n=np.roll(x_n,1)
+            x_n[0]=mean_depth
+            k=k+1
+            y=a*x_n
+            y=sum(y)
+            con.append(y)
+        except:
+            continue
+#        con=con[::-1]
+        if i>=13:
+            diff_mean=np.sign(con[j]-con[j-1])
+            j+=1
             temp[1]=diff_mean
         if temp[0]!=temp[1]:
             if temp[1]==-1:
-                peaks.append(i-1)
+                peaks.append(j)
+                
             elif temp[1]==1:
-                valley.append(i-1)
+                valley.append(j)
+                
         temp[0]=temp[1]
         print("frame number",frame_no)
-
+        
         # Apply colormap on depth image (image must be converted to 8-bit per pixel first)
         
 #        color_all.append(color_frame)
 #         Stack both images horizontally
         # images = np.hstack((color_image, depth_color))
         #print("frame no",frame_no)
-        # plt.figure(2)
-        # plt.plot(mean_all)
-        # plt.pause(0.0001)
+#        mean_all=np.array(mean_all)
+#        plt.figure(2)
+#        plt.plot(mean_all)
+#        plt.plot(mean_all[peaks],'x')
+#        plt.plot(mean_all[valley],'o')
+#        plt.pause(0.0001)
 
         # Show images
         # cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
@@ -124,7 +150,7 @@ tot_time=frame_no/30
 # mean_out=np.array(mean_out)
 # mean_out=mean_out[np.logical_not(np.isnan(mean_out))]
 # mean_decimate=signal.decimate(mean_all,3)
-i=0
+
 # for i in np.arange(0,len(mean_all)):
 #     if i>=1:
 #         diff_mean=np.sign(mean_all[i]-mean_all[i-1])
@@ -135,12 +161,18 @@ i=0
 #             elif temp[1]==1:
 #                 valley.append(i-1)
 #         temp[0]=temp[1]
+con=con[13:len(con)]
 time1=np.linspace(0,tot_time,num=len(mean_all))
-mean_all=np.array(mean_all)
+time2=np.linspace(0,tot_time,num=len(con))
 plt.figure(3)
 plt.plot(time1,mean_all)
-plt.plot(time1[peaks],mean_all[peaks],'x')
-plt.plot(time1[valley],mean_all[valley],'o')
+#mean_all=np.array(mean_all)
+#plt.plot(time1[peaks],mean_all[peaks],'x')
+#plt.plot(time1[valley],mean_all[valley],'o')
+plt.figure(4)
+plt.plot(time2,con)
+plt.plot(time2[peaks],con[peaks],'x')
+plt.plot(time2[valley],con[valley],'o')
 # plt.ylim([mean_tot+0.05,mean_tot-0.05])
 # plt.figure(4)
 # plt.plot(time1,mean_decimate)
