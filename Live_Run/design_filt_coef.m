@@ -22,6 +22,7 @@ xfft=Fs.*(0:nfft2/2-1)/nfft2;
 figure(2)
 plot(xfft,(fy/max(fy)))
 
+%Define cut off frequency and calculate filter coefficients
 cut_off=[0.04 0.4];
 order=12;
 h=fir1(order,cut_off);
