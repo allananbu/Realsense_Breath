@@ -10,14 +10,12 @@ import pyrealsense2 as rs
 import cv2
 import matplotlib.pyplot as plt
 import scipy.io
+import scipy.signal as signal
 
-images=[]
-i = 0
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 mean_all=[]
-t_all=[]
 #mean_all=np.zeros([1500,1])
-frame_all=np.zeros([1500,1])
+frame_all=[]
 config = rs.config()
 config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
@@ -32,10 +30,11 @@ temp=np.zeros([2,1])
 peaks=[]
 valley=[]
 con=[]
+i=0
 j=0
 k=0
 
-a1=scipy.io.loadmat('filt_coef_final.mat')
+a1=scipy.io.loadmat('filter_coef_2.mat')
 a=a1['h']
 a=np.transpose(a)
 a=a[:,0]
@@ -44,14 +43,14 @@ a=a[:,0]
 #playback.set_real_time(False)
 
 #a=np.load('filt_coeff_1.npy')
-x_n=np.zeros([13,])
+x_n=np.zeros([17,])
 try:
     while True:
         # Wait for a coherent pair of frames: depth and color
         frames = pipeline.wait_for_frames()
         frame_no=frames.get_frame_number() #Get frame number
         frame_time=frames.get_timestamp() #Get timestamp
-        frame_all[i]=frame_no
+        frame_all.append(frame_no)
         i=i+1
         if frame_no<20:
             continue
@@ -96,20 +95,23 @@ try:
             k=k+1
             y=a*x_n
             y=sum(y)
+#            y=np.convolve(a,x_n)
+            #y=signal.lfilter(a,1,x_n)
+#            y=sum(y)
             con.append(y)
         except:
             continue
 #        con=con[::-1]
-        if i>=13:
+        if i>=1:
             diff_mean=np.sign(con[j]-con[j-1])
             j+=1
             temp[1]=diff_mean
         if temp[0]!=temp[1]:
             if temp[1]==-1:
-                peaks.append(j)
+                peaks.append(j-1)
                 
             elif temp[1]==1:
-                valley.append(j)
+                valley.append(j-1)
                 
         temp[0]=temp[1]
         print("frame number",frame_no)
@@ -161,7 +163,10 @@ tot_time=frame_no/30
 #             elif temp[1]==1:
 #                 valley.append(i-1)
 #         temp[0]=temp[1]
-con=con[13:len(con)]
+#con=con[13:len(con)]
+con=np.array(con)
+peaks=np.array(peaks)
+valley=np.array(valley)
 time1=np.linspace(0,tot_time,num=len(mean_all))
 time2=np.linspace(0,tot_time,num=len(con))
 plt.figure(3)
