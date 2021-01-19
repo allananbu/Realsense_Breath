@@ -18,7 +18,11 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 depth_all=[]
 color_all=[]
 # Start streaming
-pipeline.start(config)
+profile=pipeline.start(config)
+device = profile.get_device()
+depth_sensor = device.query_sensors()[0]
+set_laser = 0
+depth_sensor.set_option(rs.option.laser_power, set_laser)
 
 try:
     while True:
