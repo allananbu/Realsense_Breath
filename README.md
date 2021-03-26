@@ -1,6 +1,10 @@
 # Realsense_Breath
 Breath from Depth data
 
-Extract Chest ROI with face detection and compute mean of depth ROI
+Extract Chest ROI using Skeleton Tracking and compute mean of depth ROI
 
-filter incoming signals in the band [0.09 0.5]Hz and determine peaks and valleys
+filter incoming signals using band-pass filter in real-time
+
+Determine peaks and valleys ignoring spurious events
+
+Determine Breath retention time period
